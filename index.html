@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snap & See: AI Image Classifier</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8; /* Light blue-gray for background */
+            color: #334155; /* Slate 800 */
+        }
+        .container {
+            max-width: 800px;
+        }
+        .card {
+            background-color: #ffffff;
+            border-radius: 1rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .btn-primary {
+            background-color: #4f46e5; /* Indigo 600 */
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: background-color 0.2s;
+            cursor: pointer;
+        }
+        .btn-primary:hover {
+            background-color: #4338ca; /* Indigo 700 */
+        }
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #4f46e5; /* Indigo 600 */
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-center min-h-screen p-4">
+    <div class="container card p-8 my-8 text-center">
+        <h1 class="text-4xl font-bold text-gray-800 mb-4">Snap & See AI Classifier</h1>
+        <p class="text-gray-600 mb-8">Upload an image and let our serverless AI model classify its contents instantly!</p>
+
+        <div class="mb-6">
+            <input type="file" id="imageInput" accept="image/*" class="hidden" />
+            <button id="uploadButton" class="btn-primary">Choose Image</button>
+        </div>
+
+        <div id="imagePreviewContainer" class="mb-6 hidden">
+            <h2 class="text-xl font-semibold text-gray-700 mb-3">Image Preview:</h2>
+            <img id="imagePreview" src="#" alt="Image Preview" class="max-w-full h-auto mx-auto rounded-lg shadow-md max-h-80 object-contain" />
+        </div>
+
+        <div id="loadingIndicator" class="hidden flex justify-center items-center py-4">
+            <div class="loading-spinner"></div>
+            <p class="ml-4 text-lg text-gray-600">Classifying image...</p>
+        </div>
+
+        <div id="resultsContainer" class="hidden mt-6 text-left">
+            <h2 class="text-xl font-semibold text-gray-700 mb-3">Classification Results:</h2>
+            <ul id="classificationList" class="list-disc list-inside space-y-2 text-gray-700">
+                <!-- Results will be dynamically inserted here -->
+            </ul>
+        </div>
+
+        <div id="errorMessage" class="hidden mt-6 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+            <strong class="font-bold">Error:</strong>
+            <span id="errorText" class="block sm:inline">Something went wrong.</span>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // This is the model name for your AI model. Keep it here as it's part of the request payload.
+            const MODEL_NAME = "openai-gpt-4o"; 
+            // IMPORTANT: Replace this with the actual URL of your deployed DigitalOcean Function.
+            // Example: "https://faas-nyc1-your-namespace.doserverless.co/api/v1/web/your-namespace/classify-image-proxy-project/classify-image"
+            const BACKEND_FUNCTION_URL = "https://faas-nyc1-2ef2e6cc.doserverless.co/api/v1/web/fn-cfe02525-6bf4-4417-adc4-6db4a5df133e/classify-image/src"; 
+
+            const imageInput = document.getElementById('imageInput');
+            const uploadButton = document.getElementById('uploadButton');
+            const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+            const imagePreview = document.getElementById('imagePreview');
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            const resultsContainer = document.getElementById('resultsContainer');
+            const classificationList = document.getElementById('classificationList');
+            const errorMessage = document.getElementById('errorMessage');
+            const errorText = document.getElementById('errorText');
+
+            uploadButton.addEventListener('click', () => {
+                imageInput.click();
+            });
+
+            imageInput.addEventListener('change', async (event) => {
+                const file = event.target.files[0];
+                if (!file) {
+                    return;
+                }
+
+                // Reset UI
+                imagePreviewContainer.classList.add('hidden');
+                imagePreview.src = '#';
+                resultsContainer.classList.add('hidden');
+                classificationList.innerHTML = '';
+                errorMessage.classList.add('hidden');
+
+                const reader = new FileReader();
+                reader.onload = async (e) => {
+                    const base64Image = e.target.result;
+                    imagePreview.src = base64Image;
+                    imagePreviewContainer.classList.remove('hidden');
+
+                    // Start classification
+                    await classifyImage(base64Image);
+                };
+                reader.onerror = (e) => {
+                    console.error("FileReader error:", e);
+                    showError("Failed to read image file.");
+                };
+                reader.readAsDataURL(file);
+            });
+
+            async function classifyImage(base64Image) {
+                // Remove data URL prefix (e.g., "data:image/jpeg;base64,")
+                const base64Data = base64Image.split(',')[1];
+
+                loadingIndicator.classList.remove('hidden');
+
+                try {
+                    // This payload is now sent to YOUR DigitalOcean Function
+                    const payloadToSendToBackend = {
+                        modelName: MODEL_NAME, // Pass the model name to your backend
+                        base64Data: base64Data
+                    };
+
+                    const response = await fetch(BACKEND_FUNCTION_URL, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                            // The Authorization header is now handled securely by your backend function
+                        },
+                        body: JSON.stringify(payloadToSendToBackend)
+                    });
+
+                    if (!response.ok) {
+                        const errorBody = await response.json();
+                        console.error("Backend Proxy Error Response:", errorBody);
+                        throw new Error(`Backend proxy failed: ${response.status} ${response.statusText} - ${errorBody.error?.message || 'Unknown backend error'}`);
+                    }
+
+                    const result = await response.json();
+                    
+                    // Assuming the model returns a JSON string within its content field
+                    let modelContent = result.choices[0]?.message?.content;
+                    if (modelContent) {
+                        // Attempt to parse the content as JSON
+                        let classifications;
+                        try {
+                            classifications = JSON.parse(modelContent);
+                            if (!Array.isArray(classifications)) {
+                                throw new Error("Expected JSON array for classifications.");
+                            }
+                        } catch (parseError) {
+                            // If it's not a JSON array, treat it as plain text and show directly
+                            classificationList.innerHTML = `<li class="text-red-500">Model returned unparseable content: ${modelContent}</li>`;
+                            console.warn("Model response content was not a JSON array:", modelContent, parseError);
+                            return; // Exit as we displayed the raw content
+                        }
+                        
+                        if (classifications.length > 0) {
+                            classifications.forEach(item => {
+                                const listItem = document.createElement('li');
+                                listItem.textContent = `${item.label}: ${(item.score * 100).toFixed(2)}%`;
+                                classificationList.appendChild(listItem);
+                            });
+                            resultsContainer.classList.remove('hidden');
+                        } else {
+                            classificationList.innerHTML = '<li>No classifications found.</li>';
+                            resultsContainer.classList.remove('hidden');
+                        }
+                    } else {
+                        classificationList.innerHTML = '<li>No content returned from model.</li>';
+                        resultsContainer.classList.remove('hidden');
+                    }
+
+                } catch (error) {
+                    console.error("Classification error:", error);
+                    showError(`Failed to classify image: ${error.message}`);
+                } finally {
+                    loadingIndicator.classList.add('hidden');
+                }
+            }
+
+            function showError(message) {
+                errorText.textContent = message;
+                errorMessage.classList.remove('hidden');
+            }
+        });
+    </script>
+</body>
+</html>
