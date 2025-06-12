@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Snap & See: AI Image Classifier</title>
+    <title>ELI5 AI: Explain Anything Simply</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -50,29 +50,23 @@
 </head>
 <body class="flex flex-col items-center justify-center min-h-screen p-4">
     <div class="container card p-8 my-8 text-center">
-        <h1 class="text-4xl font-bold text-gray-800 mb-4">Snap & See AI Classifier</h1>
-        <p class="text-gray-600 mb-8">Upload an image and let our serverless AI model classify its contents instantly!</p>
+        <h1 class="text-4xl font-bold text-gray-800 mb-4">ELI5 AI: Explain Anything Simply</h1>
+        <p class="text-gray-600 mb-8">Type in a concept, and AI will explain it like you're 5 years old!</p>
 
         <div class="mb-6">
-            <input type="file" id="imageInput" accept="image/*" class="hidden" />
-            <button id="uploadButton" class="btn-primary">Choose Image</button>
-        </div>
-
-        <div id="imagePreviewContainer" class="mb-6 hidden">
-            <h2 class="text-xl font-semibold text-gray-700 mb-3">Image Preview:</h2>
-            <img id="imagePreview" src="#" alt="Image Preview" class="max-w-full h-auto mx-auto rounded-lg shadow-md max-h-80 object-contain" />
+            <input type="text" id="conceptInput" placeholder="e.g., Quantum Physics, Black Hole, Blockchain" 
+                   class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-lg mb-4" />
+            <button id="explainButton" class="btn-primary w-full">Explain Simply</button>
         </div>
 
         <div id="loadingIndicator" class="hidden flex justify-center items-center py-4">
             <div class="loading-spinner"></div>
-            <p class="ml-4 text-lg text-gray-600">Classifying image...</p>
+            <p class="ml-4 text-lg text-gray-600">Generating explanation...</p>
         </div>
 
-        <div id="resultsContainer" class="hidden mt-6 text-left">
-            <h2 class="text-xl font-semibold text-gray-700 mb-3">Classification Results:</h2>
-            <ul id="classificationList" class="list-disc list-inside space-y-2 text-gray-700">
-                <!-- Results will be dynamically inserted here -->
-            </ul>
+        <div id="resultsContainer" class="hidden mt-6 text-left p-4 border border-gray-200 rounded-lg bg-gray-50">
+            <h2 class="text-xl font-semibold text-gray-700 mb-3">AI Explanation:</h2>
+            <p id="explanationText" class="text-gray-800 leading-relaxed"></p>
         </div>
 
         <div id="errorMessage" class="hidden mt-6 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
@@ -83,60 +77,36 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const MODEL_NAME = "openai-gpt-4o"; // Ensure this is your actual model name
-            const BACKEND_FUNCTION_URL = "https://faas-nyc1-2ef2e6cc.doserverless.co/api/v1/web/fn-cfe02525-6bf4-4417-adc4-6db4a5df133e/classify-image/src"; // Your DigitalOcean Function URL
+            // IMPORTANT: Replace with your actual model name
+            const MODEL_NAME = "openai-gpt-4o"; 
+            // IMPORTANT: Replace with the actual URL of your deployed DigitalOcean Function (ELI5 AI Proxy).
+            const BACKEND_FUNCTION_URL = "https://faas-nyc1-2ef2e6cc.doserverless.co/api/v1/web/fn-cfe02525-6bf4-4417-adc4-6db4a5df133e/classify-image/src"; 
 
-            const imageInput = document.getElementById('imageInput');
-            const uploadButton = document.getElementById('uploadButton');
-            const imagePreviewContainer = document.getElementById('imagePreviewContainer');
-            const imagePreview = document.getElementById('imagePreview');
+            const conceptInput = document.getElementById('conceptInput');
+            const explainButton = document.getElementById('explainButton');
             const loadingIndicator = document.getElementById('loadingIndicator');
             const resultsContainer = document.getElementById('resultsContainer');
-            const classificationList = document.getElementById('classificationList');
+            const explanationText = document.getElementById('explanationText');
             const errorMessage = document.getElementById('errorMessage');
             const errorText = document.getElementById('errorText');
 
-            uploadButton.addEventListener('click', () => {
-                imageInput.click();
-            });
-
-            imageInput.addEventListener('change', async (event) => {
-                const file = event.target.files[0];
-                if (!file) {
+            explainButton.addEventListener('click', async () => {
+                const concept = conceptInput.value.trim();
+                if (!concept) {
+                    showError("Please enter a concept to explain.");
                     return;
                 }
 
                 // Reset UI
-                imagePreviewContainer.classList.add('hidden');
-                imagePreview.src = '#';
                 resultsContainer.classList.add('hidden');
-                classificationList.innerHTML = '';
+                explanationText.textContent = '';
                 errorMessage.classList.add('hidden');
-
-                const reader = new FileReader();
-                reader.onload = async (e) => {
-                    const base64Image = e.target.result;
-                    imagePreview.src = base64Image;
-                    imagePreviewContainer.classList.remove('hidden');
-
-                    // Start classification
-                    await classifyImage(base64Image);
-                };
-                reader.onerror = (e) => {
-                    console.error("FileReader error:", e);
-                    showError("Failed to read image file.");
-                };
-                reader.readAsDataURL(file);
-            });
-
-            async function classifyImage(base64Image) {
-                const base64Data = base64Image.split(',')[1];
                 loadingIndicator.classList.remove('hidden');
 
                 try {
                     const payloadToSendToBackend = {
                         modelName: MODEL_NAME,
-                        base64Data: base64Data
+                        concept: concept
                     };
 
                     const response = await fetch(BACKEND_FUNCTION_URL, {
@@ -147,70 +117,40 @@
                         body: JSON.stringify(payloadToSendToBackend)
                     });
 
-                    // IMPORTANT CHANGE: Read the response as text, not JSON
-                    const rawResponseText = await response.text(); 
-                    console.log("Frontend received raw response text:", rawResponseText.substring(0, 500) + (rawResponseText.length > 500 ? '...' : ''));
-                    console.log("Frontend received status:", response.status, response.statusText);
-
-                    // Display raw response for debugging purposes
-                    classificationList.innerHTML = `<li><strong>Raw AI Model Response (Status ${response.status}):</strong></li><li><pre style="white-space: pre-wrap; word-break: break-all; font-size: 0.8em; color: red;">${rawResponseText}</pre></li>`;
-                    resultsContainer.classList.remove('hidden');
-
-                    if (!response.ok) {
-                        // If the status is not OK, show it as an error
-                        showError(`AI Model Error (${response.status}): ${rawResponseText}`);
-                        return; // Stop here, no further parsing
-                    }
-                    
-                    // Frontend will now try to parse AI model's response if status is OK
-                    // This part assumes AI Model returns a structure with choices[0].message.content
                     let result;
                     try {
-                        result = JSON.parse(rawResponseText); // Try parsing the "OK" response as JSON
+                        result = await response.json(); 
                     } catch (e) {
-                        showError(`Frontend Error: Failed to parse AI Model's 'OK' response as JSON. Raw: ${rawResponseText.substring(0, 100)}...`);
+                        const rawText = await response.text();
+                        console.error("Frontend Error: Failed to parse proxy response as JSON. Raw text:", rawText, e);
+                        showError(`Frontend Error: Proxy returned non-JSON or invalid JSON. Status: ${response.status}. Raw response: ${rawText.substring(0, 100)}...`);
                         return;
                     }
                     
-                    let modelContent = result.choices && result.choices.length > 0 && result.choices[0].message && result.choices[0].message.content;
+                    console.log("Frontend received parsed response from proxy:", result);
 
-                    if (modelContent) {
-                        let classifications;
-                        try {
-                            classifications = JSON.parse(modelContent); // AI model should return JSON string in content
-                            if (!Array.isArray(classifications)) {
-                                throw new Error("Expected JSON array for classifications from AI model.");
-                            }
-                        } catch (parseError) {
-                            classificationList.innerHTML = `<li class="text-red-500">AI Model content was not a JSON array: ${modelContent}</li>`;
-                            console.warn("Model response content was not a JSON array:", modelContent, parseError);
-                            return; 
-                        }
-                        
-                        if (classifications.length > 0) {
-                            classificationList.innerHTML = `<li><strong>AI Model Classifications:</strong></li>`;
-                            classifications.forEach(item => {
-                                const listItem = document.createElement('li');
-                                listItem.textContent = `${item.label}: ${(item.score * 100).toFixed(2)}%`;
-                                classificationList.appendChild(listItem);
-                            });
-                        } else {
-                            classificationList.innerHTML = '<li>No classifications found by AI model.</li>';
-                        }
+                    if (!response.ok) {
+                        showError(`Proxy/AI Model Error (${response.status}): ${result.error || JSON.stringify(result)}`);
+                        return; 
+                    }
+                    
+                    const aiExplanation = result.explanation;
+
+                    if (aiExplanation) {
+                        explanationText.textContent = aiExplanation;
                         resultsContainer.classList.remove('hidden');
-
                     } else {
-                        classificationList.innerHTML = `<li>No classification content returned from AI model. Raw response status: ${response.status}</li>`;
+                        explanationText.textContent = 'AI could not generate an explanation. Please try a different concept.';
                         resultsContainer.classList.remove('hidden');
                     }
 
                 } catch (error) {
-                    console.error("Classification error:", error);
-                    showError(`Failed to classify image: ${error.message}`);
+                    console.error("Explanation generation error:", error);
+                    showError(`Failed to generate explanation: ${error.message}`);
                 } finally {
                     loadingIndicator.classList.add('hidden');
                 }
-            }
+            });
 
             function showError(message) {
                 errorText.textContent = message;
