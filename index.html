@@ -56,7 +56,7 @@
         <div class="mb-6">
             <input type="text" id="conceptInput" placeholder="e.g., Quantum Physics, Black Hole, Blockchain" 
                    class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-lg mb-4" />
-            <button id="explainButton" class="btn-primary w-full">Explain Simply</button>
+            <button id="explainButton" class="btn-primary w-48 mx-auto block">Explain Simply</button>
         </div>
 
         <div id="loadingIndicator" class="hidden flex justify-center items-center py-4">
@@ -75,6 +75,15 @@
         </div>
     </div>
 
+    <footer class="mt-8 text-center text-gray-500 text-sm">
+        <p class="mb-2">
+            <a href="info.html" class="text-indigo-600 hover:underline">The Rise of Serverless</a>
+        </p>
+        <p>
+            Made with &#x2764;&#xfe0f; using <a href="https://www.digitalocean.com/blog/gen-ai-new-serverless-inference" class="text-indigo-600 hover:underline">DigitalOcean Serverless Inference</a> by <a href="https://github.com/corythorpe" class="text-indigo-600 hover:underline">Cory</a>
+        </p>
+    </footer>
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             // IMPORTANT: Replace with your actual model name
@@ -90,7 +99,8 @@
             const errorMessage = document.getElementById('errorMessage');
             const errorText = document.getElementById('errorText');
 
-            explainButton.addEventListener('click', async () => {
+            // Function to handle the explanation logic
+            const getExplanation = async () => {
                 const concept = conceptInput.value.trim();
                 if (!concept) {
                     showError("Please enter a concept to explain.");
@@ -149,6 +159,17 @@
                     showError(`Failed to generate explanation: ${error.message}`);
                 } finally {
                     loadingIndicator.classList.add('hidden');
+                }
+            };
+
+            // Event listener for button click
+            explainButton.addEventListener('click', getExplanation);
+
+            // Event listener for Enter key press on input
+            conceptInput.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter') {
+                    event.preventDefault(); // Prevent default form submission behavior
+                    getExplanation();
                 }
             });
 
