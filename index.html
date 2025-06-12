@@ -15,6 +15,7 @@
             color: #334155; /* Slate 800 */
         }
         .container {
+            /* max-width for the main content container */
             max-width: 800px;
         }
         .card {
@@ -49,47 +50,52 @@
     </style>
 </head>
 <body class="flex flex-col items-center justify-center min-h-screen p-4">
-    <div class="container card p-8 my-8 text-center">
-        <h1 class="text-4xl font-bold text-gray-800 mb-4">ELI5 AI: Explain Anything Simply</h1>
-        <p class="text-gray-600 mb-8">Type in a concept, and AI will explain it like you're 5 years old!</p>
+    <!-- Updated max-width for the outer container to control overall page width -->
+    <div class="container mx-auto p-4 md:p-8 max-w-6xl"> 
+        <div class="card p-8 my-8 text-center">
+            <h1 class="text-4xl font-bold text-gray-800 mb-4">ELI5 AI: Explain Anything Simply</h1>
+            <p class="text-gray-600 mb-8">Type in a concept, and AI will explain it like you're 5 years old!</p>
 
-        <div class="mb-6">
-            <input type="text" id="conceptInput" placeholder="e.g., Quantum Physics, Black Hole, Blockchain" 
-                   class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-lg mb-4" />
-            <button id="explainButton" class="btn-primary w-48 mx-auto block">Explain</button>
+            <div class="mb-6">
+                <input type="text" id="conceptInput" placeholder="e.g., Quantum Physics, Black Hole, Blockchain" 
+                       class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-lg mb-4" />
+                <!-- Button size adjusted: removed w-full, added w-48 mx-auto block -->
+                <button id="explainButton" class="btn-primary w-48 mx-auto block">Explain Simply</button>
+            </div>
+
+            <div id="loadingIndicator" class="hidden flex justify-center items-center py-4">
+                <div class="loading-spinner"></div>
+                <p class="ml-4 text-lg text-gray-600">Generating explanation...</p>
+            </div>
+
+            <div id="resultsContainer" class="hidden mt-6 text-left p-4 border border-gray-200 rounded-lg bg-gray-50">
+                <h2 class="text-xl font-semibold text-gray-700 mb-3">AI Explanation:</h2>
+                <p id="explanationText" class="text-gray-800 leading-relaxed"></p>
+            </div>
+
+            <div id="errorMessage" class="hidden mt-6 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                <strong class="font-bold">Error:</strong>
+                <span id="errorText" class="block sm:inline">Something went wrong.</span>
+            </div>
         </div>
 
-        <div id="loadingIndicator" class="hidden flex justify-center items-center py-4">
-            <div class="loading-spinner"></div>
-            <p class="ml-4 text-lg text-gray-600">Generating explanation...</p>
-        </div>
+        <footer class="mt-8 text-center text-gray-500 text-sm">
+            <p class="mb-2">
+                <a href="info.html" class="text-indigo-600 hover:underline">The Rise of Serverless</a>
+            </p>
+            <p>
+                Made with &#x2764;&#xfe0f; using <a href="https://www.digitalocean.com/blog/gen-ai-new-serverless-inference" class="text-indigo-600 hover:underline">DigitalOcean Serverless Inference</a> by <a href="https://github.com/corythorpe" class="text-indigo-600 hover:underline">Cory</a>
+            </p>
+        </footer>
 
-        <div id="resultsContainer" class="hidden mt-6 text-left p-4 border border-gray-200 rounded-lg bg-gray-50">
-            <h2 class="text-xl font-semibold text-gray-700 mb-3">AI Explanation:</h2>
-            <p id="explanationText" class="text-gray-800 leading-relaxed"></p>
-        </div>
-
-        <div id="errorMessage" class="hidden mt-6 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-            <strong class="font-bold">Error:</strong>
-            <span id="errorText" class="block sm:inline">Something went wrong.</span>
-        </div>
     </div>
-
-    <footer class="mt-8 text-center text-gray-500 text-sm">
-        <p class="mb-2">
-            <a href="info.html" class="text-indigo-600 hover:underline">The Rise of Serverless</a>
-        </p>
-        <p>
-            Made with &#x2764;&#xfe0f; using <a href="https://www.digitalocean.com/blog/gen-ai-new-serverless-inference" class="text-indigo-600 hover:underline">DigitalOcean Serverless Inference</a> by <a href="https://github.com/corythorpe" class="text-indigo-600 hover:underline">cory</a>
-        </p>
-    </footer>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             // IMPORTANT: Replace with your actual model name
             const MODEL_NAME = "openai-gpt-4o"; 
             // IMPORTANT: Replace with the actual URL of your deployed DigitalOcean Function (ELI5 AI Proxy).
-            const BACKEND_FUNCTION_URL = "https://faas-nyc1-2ef2e6cc.doserverless.co/api/v1/web/fn-cfe02525-6bf4-4417-adc4-6db4a5df133e/classify-image/src"; 
+            const BACKEND_FUNCTION_URL = "YOUR_DIGITALOCEAN_FUNCTION_URL_HERE"; 
 
             const conceptInput = document.getElementById('conceptInput');
             const explainButton = document.getElementById('explainButton');
