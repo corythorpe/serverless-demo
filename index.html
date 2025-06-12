@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ELI5 AI: Explain Anything Simply</title>
+    <title>ELI5: Explain Like I'm 5</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Chart.js added for bar graphs -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
@@ -15,7 +16,6 @@
             color: #334155; /* Slate 800 */
         }
         .container {
-            /* max-width for the main content container */
             max-width: 800px;
         }
         .card {
@@ -35,42 +35,191 @@
         .btn-primary:hover {
             background-color: #4338ca; /* Indigo 700 */
         }
+        .btn-secondary { /* Style for the new "Tell me more" button */
+            background-color: #e0e7ff; /* Indigo 100 */
+            color: #4f46e5; /* Indigo 600 */
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            transition: background-color 0.2s;
+            cursor: pointer;
+            border: 1px solid #c7d2fe;
+        }
+        .btn-secondary:hover {
+            background-color: #c7d2fe; /* Indigo 200 */
+        }
         .loading-spinner {
             border: 4px solid #f3f3f3;
             border-top: 4px solid #4f46e5; /* Indigo 600 */
             border-radius: 50%;
             width: 40px;
             height: 40px;
+            /* Ensure it is a flex item to prevent stretching by parent flex containers */
+            display: flex; 
+            flex-shrink: 0; 
+            /* animation properties remain */
             animation: spin 1s linear infinite;
         }
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        /* Chart container specific styles to manage size and aspect ratio */
+        .chart-container-serverless {
+            position: relative;
+            width: 100%;
+            max-width: 500px; /* Max width for chart to prevent stretching on very wide screens */
+            height: 150px !important; /* IMPORTANT: Ensure height is fixed and overrides Chart.js inline style */
+            margin-left: auto;
+            margin-right: auto;
+            padding: 1rem;
+        }
+        @media (min-width: 768px) {
+            .chart-container-serverless {
+                height: 180px !important; /* IMPORTANT: Ensure height is fixed and overrides Chart.js inline style */
+            }
+        }
+        .progress-bar-container {
+            width: 100%;
+            background-color: #e2e8f0; /* slate-200 */
+            border-radius: 0.25rem;
+            overflow: hidden;
+            height: 1.5rem;
+            display: flex; /* Use flexbox for inner bar fill */
+            align-items: center;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            background-color: #4f46e5; /* Indigo 600 */
+            transition: width 1s ease-out; /* Smooth transition for filling */
+            display: flex;
+            align-items: center;
+            justify-content: flex-end; /* Align text to end if inside */
+            color: white;
+            font-weight: 600;
+            padding-right: 0.5rem;
+            white-space: nowrap;
+        }
+        .progress-bar-label-line { /* New class for the label line */
+            display: flex;
+            justify-content: space-between; /* Space out label and value */
+            align-items: center;
+            margin-bottom: 0.25rem;
+            font-weight: 500;
+            color: #475569; /* slate-600 */
+            text-align: left;
+        }
+        .time-blocks-container {
+            display: flex;
+            align-items: flex-end; /* Align to bottom for height comparison */
+            justify-content: center;
+            width: 100%;
+            max-width: 300px;
+            margin: 0 auto;
+            gap: 1.5rem;
+            min-height: 150px; /* Ensure visual space for blocks */
+            padding-bottom: 1rem; /* Space for labels below */
+        }
+        .time-block {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end; /* Push content to bottom of its own block */
+            width: 80px; /* Fixed width for blocks */
+            background-color: #4f46e5; /* Default color */
+            border-radius: 0.5rem;
+            transition: height 1s ease-out; /* Smooth height transition */
+            padding-top: 0.5rem;
+            font-weight: bold;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .time-block-label-below { /* New class for labels below blocks */
+            font-size: 0.8em;
+            color: #475569;
+            margin-top: 0.5rem; /* Space from block */
+            text-align: center;
+        }
+        .hidden-element { /* Utility class to hide elements */
+            display: none !important; /* Use !important to ensure it overrides flex/block */
+        }
     </style>
 </head>
 <body class="flex flex-col items-center justify-center min-h-screen p-4">
-    <!-- Updated max-width for the outer container to control overall page width -->
+    <!-- Chosen Palette: Minimalistic & Supportive. Background: #f0f4f8 (light blue-gray). Main card: #ffffff. Text: #334155. Accent: #4f46e5 (indigo). -->
+    <!-- Application Structure Plan: The SPA is structured as a single-page interactive tool focused on AI ELI5 explanations with integrated serverless value proposition. User flow: input concept -> get ELI5 -> optionally expand -> view serverless benefits. This structure highlights AI's power AND serverless efficiency, using randomized statistics for dynamic impact. -->
+    <!-- Visualization & Content Choices: Text-in, text-out for AI explanation. For serverless value: Horizontal Bar Chart (Chart.js) for Cost Savings. Custom HTML/CSS Progress Bars for Operational Efficiency. Custom HTML/CSS Vertical Time Blocks for Scale Time. Dynamic display of stats based on randomization. Quantitative data in monetary terms. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
     <div class="container mx-auto p-4 md:p-8 max-w-6xl"> 
         <div class="card p-8 my-8 text-center">
-            <h1 class="text-4xl font-bold text-gray-800 mb-4">ELI5 AI: Explain Anything Simply</h1>
-            <p class="text-gray-600 mb-8">Type in a concept, and AI will explain it like you're 5 years old!</p>
+            <h1 class="text-4xl font-bold text-gray-800 mb-4">ELI5: Explain Like I'm 5</h1>
+            <p class="text-gray-600 mb-8">Type in a concept and AI explains it!</p>
 
             <div class="mb-6">
                 <input type="text" id="conceptInput" placeholder="e.g., Quantum Physics, Black Hole, Blockchain" 
                        class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-lg mb-4" />
-                <!-- Button size adjusted: removed w-full, added w-48 mx-auto block -->
-                <button id="explainButton" class="btn-primary w-48 mx-auto block">Explain Simply</button>
+                <button id="explainButton" class="btn-primary w-48 mx-auto block">Explain</button>
             </div>
 
-            <div id="loadingIndicator" class="hidden flex justify-center items-center py-4">
+            <!-- Initial loading indicator for new concepts, placed before results container -->
+            <div id="initialLoadingSpinnerContainer" class="hidden flex justify-center items-center py-4">
                 <div class="loading-spinner"></div>
                 <p class="ml-4 text-lg text-gray-600">Generating explanation...</p>
             </div>
 
             <div id="resultsContainer" class="hidden mt-6 text-left p-4 border border-gray-200 rounded-lg bg-gray-50">
-                <h2 class="text-xl font-semibold text-gray-700 mb-3">AI Explanation:</h2>
-                <p id="explanationText" class="text-gray-800 leading-relaxed"></p>
+                <h2 id="eli5Heading" class="text-xl font-semibold text-gray-700 mb-3">ELI5 Explanation:</h2>
+                <p id="eli5ExplanationText" class="text-gray-800 leading-relaxed"></p>
+                
+                <!-- NEW: Loading indicator specifically for expanded explanation, placed within resultsContainer -->
+                <div id="expandedLoadingSpinnerContainer" class="hidden flex justify-center items-center py-4 mt-4">
+                    <div class="loading-spinner"></div>
+                    <p class="ml-4 text-lg text-gray-600">Generating more information...</p>
+                </div>
+
+                <!-- Expanded results container initially hidden -->
+                <div id="expandedResultsContainer" class="hidden mt-6 pt-4 border-t border-gray-200">
+                    <h2 id="expandedHeading" class="text-xl font-semibold text-gray-700 mb-3">Expanded Explanation:</h2>
+                    <p id="expandedExplanationText" class="text-gray-800 leading-relaxed"></p>
+                </div>
+
+                <button id="expandExplanationButton" class="btn-secondary mt-4 mx-auto block hidden">Tell me more</button>
+
+                <!-- NEW: Serverless Value Proposition Section - Now with dynamic content and varied visuals -->
+                <div id="serverlessValueSection" class="hidden mt-6 pt-4 border-t border-gray-200 text-center">
+                    <h3 id="valuePropTitle" class="text-lg font-semibold text-gray-700 mb-2"></h3>
+                    <p id="valuePropDescription" class="text-sm text-gray-600 mb-4"></p>
+                    
+                    <div id="chartVisualWrapper" class="mb-4 w-full max-w-md mx-auto chart-container-serverless">
+                        <!-- Canvas is now dynamically created and appended in renderBenefitChart -->
+                        <div id="customBenefitVisual" class="hidden w-full max-w-md mx-auto text-left px-4 py-2">
+                            <!-- Custom visuals will be injected here (progress bars or time blocks) -->
+                        </div>
+                    </div>
+
+                    <!-- Individual Cost Assumptions Notes, to be shown/hidden dynamically -->
+                    <div id="costSavingsNote" class="text-xs text-gray-500 mt-2 px-0 mx-auto text-left hidden-element w-full max-w-md flex justify-center" style="height:auto;min-height:0;">
+                        <div class="w-full text-left" style="padding:0 1rem 0 1rem; background:none; box-shadow:none; height:auto; min-height:0;">
+                            <p><em>Estimated savings for Cost Savings: Based on a typical ~$30/month tiny VM idling, vs. minimal usage cost for serverless.</em></p>
+                        </div>
+                    </div>
+                    <div id="opsEfficiencyNote" class="text-xs text-gray-500 mt-2 px-0 mx-auto text-left hidden-element w-full max-w-md flex justify-center" style="height:auto;min-height:0;">
+                        <div class="w-full text-left" style="padding:0 1rem 0 1rem; background:none; box-shadow:none; height:auto; min-height:0;">
+                            <p><em>Estimated savings for Operational Efficiency: Based on an estimated engineer cost of ~$75/hour (fully loaded).</em></p>
+                        </div>
+                    </div>
+                    <div id="scaleTimeNote" class="text-xs text-gray-500 mt-2 px-0 mx-auto text-left hidden-element w-full max-w-md flex justify-center" style="height:auto;min-height:0;">
+                        <div class="w-full text-left" style="padding:0 1rem 0 1rem; background:none; box-shadow:none; height:auto; min-height:0;">
+                            <p><em>Estimated savings for Scale Time: Based on typical manual vs. automated cloud scaling times.</em></p>
+                        </div>
+                    </div>
+                    <!-- New: Call to action for The Rise of Serverless -->
+                    <div class="mt-6 text-center">
+                        <span class="text-lg font-semibold">Read about the <a href="info.html" class="text-indigo-600 hover:underline">Rise of Serverless</a></span>
+                    </div>
+                </div>
             </div>
 
             <div id="errorMessage" class="hidden mt-6 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
@@ -80,11 +229,13 @@
         </div>
 
         <footer class="mt-8 text-center text-gray-500 text-sm">
-            <p class="mb-2">
-                <a href="info.html" class="text-indigo-600 hover:underline">The Rise of Serverless</a>
+            <p class="mb-2 flex justify-center items-center gap-2">
+                <a href="info.html" class="text-indigo-600 hover:underline">The Rise of Serverless</a> 
+                <span class="text-gray-400">|</span> 
+                <a href="scenarios.html" class="text-indigo-600 hover:underline">Scenario Weaver</a>
             </p>
             <p>
-                Made with &#x2764;&#xfe0f; using <a href="https://www.digitalocean.com/blog/gen-ai-new-serverless-inference" class="text-indigo-600 hover:underline">DigitalOcean Serverless Inference</a> by <a href="https://github.com/corythorpe" class="text-indigo-600 hover:underline">Cory</a>
+                Made with &#x2764;&#xfe0f; using <a href="https://www.digitalocean.com/blog/gen-ai-new-serverless-inference" class="text-indigo-600 hover:underline">DigitalOcean Serverless Inference</a> by <a href="https://github.com/corythorpe" class="text-indigo-600 hover:underline">cory</a>
             </p>
         </footer>
 
@@ -92,37 +243,325 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // IMPORTANT: Replace with your actual model name
-            const MODEL_NAME = "openai-gpt-4o"; 
-            // IMPORTANT: Replace with the actual URL of your deployed DigitalOcean Function (ELI5 AI Proxy).
-            const BACKEND_FUNCTION_URL = "YOUR_DIGITALOCEAN_FUNCTION_URL_HERE"; 
+            const MODEL_NAME = "llama3-8b-instruct"; 
+            const BACKEND_FUNCTION_URL = "https://faas-nyc1-2ef2e6cc.doserverless.co/api/v1/web/fn-cfe02525-6bf4-4417-adc4-6db4a5df133e/classify-image/src"; 
 
             const conceptInput = document.getElementById('conceptInput');
             const explainButton = document.getElementById('explainButton');
-            const loadingIndicator = document.getElementById('loadingIndicator');
+            const initialLoadingSpinnerContainer = document.getElementById('initialLoadingSpinnerContainer'); 
             const resultsContainer = document.getElementById('resultsContainer');
-            const explanationText = document.getElementById('explanationText');
+            const eli5Heading = document.getElementById('eli5Heading');
+            const eli5ExplanationText = document.getElementById('eli5ExplanationText');
+            const expandExplanationButton = document.getElementById('expandExplanationButton'); 
+            const expandedResultsContainer = document.getElementById('expandedResultsContainer');
+            const expandedHeading = document.getElementById('expandedHeading');
+            const expandedExplanationText = document.getElementById('expandedExplanationText');
+            const expandedLoadingSpinnerContainer = document.getElementById('expandedLoadingSpinnerContainer');
             const errorMessage = document.getElementById('errorMessage');
             const errorText = document.getElementById('errorText');
+            const serverlessValueSection = document.getElementById('serverlessValueSection'); 
+            const valuePropTitle = document.getElementById('valuePropTitle');
+            const valuePropDescription = document.getElementById('valuePropDescription');
+            
+            // These are now declared as 'let' and will be assigned to the new canvas element
+            // inside renderBenefitChart.
+            let serverlessBenefitChartCanvas; 
+            let serverlessBenefitChartCtx; 
 
-            // Function to handle the explanation logic
-            const getExplanation = async () => {
+            const chartVisualWrapper = document.getElementById('chartVisualWrapper'); 
+            const customBenefitVisual = document.getElementById('customBenefitVisual');
+            
+            const costSavingsNote = document.getElementById('costSavingsNote');
+            const opsEfficiencyNote = document.getElementById('opsEfficiencyNote');
+            const scaleTimeNote = document.getElementById('scaleTimeNote');
+
+            let currentConcept = ""; 
+            let benefitChart = null; 
+            let currentBenefitIndex = 0; 
+
+            const benefitStats = [
+                {
+                    type: "chart", // Chart.js Bar Chart
+                    id: "costSavings", 
+                    title: "Cost Savings: Eliminating Idle Infrastructure",
+                    description: (savedCost) => `Serverless converts fixed server costs into dynamic, usage-based fees, eliminating wasteful spending on idle compute resources. This can lead to substantial annual savings, with <strong>estimated savings of up to $${savedCost.toLocaleString()} annually</strong> based on typical sporadic usage.`,
+                    labels: ["Traditional (Always On)", "Serverless (Pay-per-Use)"],
+                    data: [4320, 15], 
+                    unit: "$",
+                    tooltipLabel: "Annual Cost",
+                    isCurrency: true,
+                    savings: 4320 - 15 
+                },
+                {
+                    type: "progress_bars", // Custom HTML Progress Bars
+                    id: "opsEfficiency", 
+                    title: "Operational Efficiency: Reduced DevOps Overhead",
+                    description: (savedHours) => `Serverless offloads server maintenance, patching, and scaling, freeing up valuable engineering time. This can <strong>save an estimated ${savedHours.toLocaleString()} hours of DevOps effort per month</strong>, allowing your team to focus on innovation.`,
+                    details: [
+                        { label: "Traditional Ops Overhead", value: 40, unit: " hours/month", color: "#4f46e5", isCurrency: false },
+                        { label: "Serverless Ops Overhead", value: 2, unit: " hours/month", color: "#34d399", isCurrency: false }
+                    ],
+                    savings: 40 - 2 
+                },
+                {
+                    type: "time_blocks", // Custom HTML Vertical Time Blocks
+                    id: "scaleTime", 
+                    title: "Scale Time: Handling Sudden Traffic Spikes",
+                    description: (savedTime) => `When demand surges, serverless automatically provisions resources in seconds. This <strong>slashes scaling time by up to ${savedTime.toLocaleString()} seconds</strong>, ensuring your app stays responsive and avoids costly downtime during peak loads.`,
+                    details: [
+                        { label: "Traditional (Manual Scale)", value: 900, unit: "s", color: "#4f46e5" }, 
+                        { label: "Serverless (Auto-Scale)", value: 5, unit: "s", color: "#34d399" } 
+                    ],
+                    savings: 900 - 5 
+                }
+            ];
+
+            const renderBenefitChart = (labels, data, unit, tooltipLabel, isCurrency, benefitId) => {
+                console.log("Rendering Chart.js Bar Chart.");
+                chartVisualWrapper.innerHTML = '';
+                chartVisualWrapper.classList.remove('mb-20'); // Remove extra margin for non-scale time visuals
+                if (benefitId === 'scaleTime') {
+                    chartVisualWrapper.classList.add('mb-20'); // Only add margin for spike chart
+                } else {
+                    chartVisualWrapper.classList.remove('mb-20');
+                }
+                customBenefitVisual.classList.add('hidden'); 
+                customBenefitVisual.innerHTML = ''; 
+                if (benefitChart) {
+                    benefitChart.destroy(); 
+                    console.log("Destroyed previous Chart.js instance.");
+                }
+                const newCanvas = document.createElement('canvas');
+                newCanvas.id = 'serverlessBenefitChart';
+                newCanvas.width = 500;
+                newCanvas.height = 150;
+                chartVisualWrapper.appendChild(newCanvas);
+                serverlessBenefitChartCtx = newCanvas.getContext('2d'); 
+                chartVisualWrapper.classList.remove('hidden'); 
+                newCanvas.classList.remove('hidden');
+                console.log("Canvas created and visible:", newCanvas, "Context:", serverlessBenefitChartCtx);
+                const wrappedLabels = labels.map(label => wrapLabel(label, 20)); 
+                benefitChart = new Chart(serverlessBenefitChartCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: wrappedLabels,
+                        datasets: [{
+                            data: data,
+                            backgroundColor: ['#4f46e5', '#34d399'], 
+                            borderColor: ['#3730a3', '#059669'],
+                            borderWidth: 1,
+                            borderRadius: 4
+                        }]
+                    },
+                    options: {
+                        indexAxis: 'y', 
+                        responsive: true,
+                        maintainAspectRatio: false, 
+                        animations: {
+                            x: {
+                                type: 'number',
+                                easing: 'easeOutQuart',
+                                duration: 800,
+                                from: 0
+                            },
+                            y: {
+                                type: 'number',
+                                duration: 0 // disables y animation
+                            }
+                        },
+                        plugins: {
+                            tooltip: {
+                                callbacks: {
+                                    title: function(tooltipItems) {
+                                        const item = tooltipItems[0];
+                                        let label = item.chart.data.labels[item.dataIndex];
+                                        return Array.isArray(label) ? label.join(' ') : label;
+                                    },
+                                    label: function(context) {
+                                        let label = context.dataset.label || '';
+                                        if (label) label += ': ';
+                                        const value = context.parsed.x;
+                                        return isCurrency ? `${tooltipLabel}: $${value.toLocaleString()}` : `${tooltipLabel}: ${value.toLocaleString()}${unit}`;
+                                    }
+                                }
+                            },
+                            legend: { display: false }
+                        },
+                        scales: {
+                            x: {
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: function(value) {
+                                        return isCurrency ? '$' + value.toLocaleString() : value.toLocaleString() + unit;
+                                    }
+                                },
+                                grid: { display: false }
+                            },
+                            y: { grid: { display: false } }
+                        }
+                    }
+                });
+                console.log("Chart.js instance created successfully.");
+            };
+
+            const renderOpsEfficiencyVisual = (details) => {
+                console.log("Rendering progress_bars visual.");
+                chartVisualWrapper.classList.remove('mb-20'); // Remove extra margin for non-scale time visuals
+                if (benefitChart) {
+                    benefitChart.destroy();
+                    benefitChart = null;
+                }
+                chartVisualWrapper.innerHTML = '';
+                chartVisualWrapper.appendChild(customBenefitVisual);
+                customBenefitVisual.classList.remove('hidden');
+                customBenefitVisual.innerHTML = '';
+                let htmlContent = '';
+                details.forEach((item, idx) => {
+                    const barWidth = (item.value / details[0].value) * 100;
+                    const valueFormatted = item.isCurrency ? `$${item.value.toLocaleString()}` : `${item.value.toLocaleString()}${item.unit}`;
+                    // If bar is less than 30%, show value outside the bar for readability
+                    const showValueOutside = barWidth < 30;
+                    htmlContent += `
+                        <div class="mb-3">
+                            <div class="progress-bar-label-line">
+                                <span>${item.label}</span>
+                                ${showValueOutside ? '' : `<span class="font-bold">${valueFormatted}</span>`}
+                            </div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar-fill" style="width: ${barWidth}%; background-color: ${item.color};">
+                                    ${!showValueOutside ? `<span class="ml-2">${valueFormatted}</span>` : ''}
+                                </div>
+                                ${showValueOutside ? `<span class="ml-2 font-bold text-gray-700" style="margin-left: 8px;">${valueFormatted}</span>` : ''}
+                            </div>
+                        </div>
+                    `;
+                });
+                customBenefitVisual.innerHTML = htmlContent;
+                chartVisualWrapper.classList.remove('hidden');
+                console.log("Progress bars visual rendered successfully.");
+            };
+
+            const renderScaleTimeVisual = (details) => {
+                console.log("Rendering time_blocks visual.");
+                chartVisualWrapper.classList.add('mb-20'); // Add margin for scale time benefit only
+                if (benefitChart) {
+                    benefitChart.destroy();
+                    benefitChart = null;
+                }
+                chartVisualWrapper.innerHTML = '';
+                chartVisualWrapper.appendChild(customBenefitVisual);
+                customBenefitVisual.classList.remove('hidden');
+                customBenefitVisual.style.display = 'block';
+                customBenefitVisual.style.width = '100%';
+                customBenefitVisual.style.marginBottom = '';
+                customBenefitVisual.innerHTML = '';
+                const traditional = details[0];
+                const serverless = details[1];
+                const maxHeight = 150;
+                const minHeight = 20;
+                const tradHeight = maxHeight;
+                let serverlessHeight = (serverless.value / traditional.value) * maxHeight;
+                if (serverlessHeight < minHeight && serverless.value > 0) {
+                    serverlessHeight = minHeight;
+                }
+                if (serverless.value === 0) {
+                    serverlessHeight = 5;
+                }
+                // Helper to split label at parenthesis
+                function splitLabel(label) {
+                    const idx = label.indexOf('(');
+                    if (idx === -1) return [label, ''];
+                    return [label.slice(0, idx).trim(), label.slice(idx).trim()];
+                }
+                const [tradMain, tradParen] = splitLabel(traditional.label);
+                const [servMain, servParen] = splitLabel(serverless.label);
+                customBenefitVisual.innerHTML = `
+                    <div class="time-blocks-container">
+                        <div class="flex flex-col items-center w-32">
+                            <div class="time-block" style="height: ${tradHeight}px; background-color: ${traditional.color};">
+                                <span class="text-sm">${traditional.value.toLocaleString()}${traditional.unit}</span>
+                            </div>
+                            <span class="text-sm font-semibold text-gray-700 mt-2">${tradMain}</span>
+                            ${tradParen ? `<span class="text-xs text-gray-500">${tradParen}</span>` : ''}
+                        </div>
+                        <div class="flex flex-col items-center w-32">
+                            <div class="time-block" style="height: ${serverlessHeight}px; background-color: ${serverless.color};">
+                                <span class="text-sm">${serverless.value.toLocaleString()}${serverless.unit}</span>
+                            </div>
+                            <span class="text-sm font-semibold text-gray-700 mt-2">${servMain}</span>
+                            ${servParen ? `<span class="text-xs text-gray-500">${servParen}</span>` : ''}
+                        </div>
+                    </div>
+                `;
+                // Just show the note, don't move or style it
+                scaleTimeNote.classList.remove('hidden-element');
+                chartVisualWrapper.classList.remove('hidden');
+                console.log("Time blocks visual rendered successfully.");
+            };
+
+            const wrapLabel = (label, maxLength = 16) => {
+                if (typeof label !== 'string') {
+                    return label;
+                }
+                if (label.length <= maxLength) {
+                    return label;
+                }
+                const words = label.split(' ');
+                const lines = [];
+                let currentLine = '';
+                for (const word of words) {
+                    if ((currentLine + ' ' + word).length > maxLength && currentLine !== '') {
+                        lines.push(currentLine);
+                        currentLine = word;
+                    } else {
+                        currentLine += (currentLine ? ' ' : '') + word;
+                    }
+                }
+                lines.push(currentLine);
+                return lines;
+            };
+
+            const getExplanation = async (taskType) => {
                 const concept = conceptInput.value.trim();
                 if (!concept) {
                     showError("Please enter a concept to explain.");
                     return;
                 }
+                currentConcept = concept; 
 
-                // Reset UI
-                resultsContainer.classList.add('hidden');
-                explanationText.textContent = '';
                 errorMessage.classList.add('hidden');
-                loadingIndicator.classList.remove('hidden');
+                
+                initialLoadingSpinnerContainer.classList.add('hidden');
+                expandedLoadingSpinnerContainer.classList.add('hidden'); 
+                serverlessValueSection.classList.add('hidden'); 
+                expandExplanationButton.classList.add('hidden'); 
 
+
+                const startTime = performance.now(); 
+
+                if (taskType === "eli5") {
+                    resultsContainer.classList.add('hidden'); 
+                    eli5ExplanationText.textContent = ''; 
+                    expandedResultsContainer.classList.add('hidden'); 
+                    expandedExplanationText.textContent = ''; 
+                    
+                    initialLoadingSpinnerContainer.classList.remove('hidden'); 
+                    initialLoadingSpinnerContainer.querySelector('p').textContent = "Generating explanation...";
+
+                } else if (taskType === "expand_eli5") {
+                    expandedResultsContainer.classList.add('hidden'); 
+                    expandedExplanationText.textContent = ''; 
+                    expandExplanationButton.classList.add('hidden'); 
+
+                    expandedLoadingSpinnerContainer.classList.remove('hidden'); 
+                    expandedLoadingSpinnerContainer.querySelector('p').textContent = "Generating more information...";
+                }
+                
                 try {
                     const payloadToSendToBackend = {
                         modelName: MODEL_NAME,
-                        concept: concept
+                        concept: concept,
+                        taskType: taskType 
                     };
 
                     const response = await fetch(BACKEND_FUNCTION_URL, {
@@ -153,29 +592,77 @@
                     const aiExplanation = result.explanation;
 
                     if (aiExplanation) {
-                        explanationText.textContent = aiExplanation;
-                        resultsContainer.classList.remove('hidden');
+                        if (taskType === "eli5") {
+                            eli5ExplanationText.textContent = aiExplanation;
+                            eli5Heading.textContent = "ELI5 Explanation:";
+                            resultsContainer.classList.remove('hidden'); 
+                            expandExplanationButton.classList.remove('hidden'); 
+
+                            // Update and show serverless value proposition
+                            // Cycle through benefit stats
+                            const currentStat = benefitStats[currentBenefitIndex];
+                            currentBenefitIndex = (currentBenefitIndex + 1) % benefitStats.length; 
+
+                            valuePropTitle.textContent = currentStat.title;
+                            valuePropDescription.innerHTML = currentStat.description(currentStat.savings);
+
+                            // Hide all cost assumption notes first
+                            costSavingsNote.classList.add('hidden-element');
+                            opsEfficiencyNote.classList.add('hidden-element');
+                            scaleTimeNote.classList.add('hidden-element');
+                            
+                            // Show specific note based on current benefit
+                            if (currentStat.id === "costSavings") {
+                                costSavingsNote.classList.remove('hidden-element');
+                            } else if (currentStat.id === "opsEfficiency") {
+                                opsEfficiencyNote.classList.remove('hidden-element');
+                            } else if (currentStat.id === "scaleTime") {
+                                scaleTimeNote.classList.remove('hidden-element');
+                            } 
+
+                            // Render the correct visual type
+                            if (currentStat.type === "chart") {
+                                renderBenefitChart(currentStat.labels, currentStat.data, currentStat.unit, currentStat.tooltipLabel, currentStat.isCurrency, currentStat.id);
+                            } else if (currentStat.type === "progress_bars") {
+                                renderOpsEfficiencyVisual(currentStat.details);
+                            } else if (currentStat.type === "time_blocks") {
+                                renderScaleTimeVisual(currentStat.details);
+                            }
+                            serverlessValueSection.classList.remove('hidden'); 
+
+                        } else if (taskType === "expand_eli5") {
+                            expandedExplanationText.textContent = aiExplanation;
+                            expandedHeading.textContent = "Expanded Explanation:";
+                            expandedResultsContainer.classList.remove('hidden'); 
+                            serverlessValueSection.classList.remove('hidden'); 
+                        }
                     } else {
                         explanationText.textContent = 'AI could not generate an explanation. Please try a different concept.';
                         resultsContainer.classList.remove('hidden');
+                        expandExplanationButton.classList.add('hidden'); 
                     }
 
                 } catch (error) {
                     console.error("Explanation generation error:", error);
                     showError(`Failed to generate explanation: ${error.message}`);
                 } finally {
-                    loadingIndicator.classList.add('hidden');
+                    initialLoadingSpinnerContainer.classList.add('hidden'); 
+                    expandedLoadingSpinnerContainer.classList.add('hidden'); 
                 }
             };
 
-            // Event listener for button click
-            explainButton.addEventListener('click', getExplanation);
+            explainButton.addEventListener('click', () => getExplanation("eli5"));
 
-            // Event listener for Enter key press on input
             conceptInput.addEventListener('keydown', (event) => {
                 if (event.key === 'Enter') {
-                    event.preventDefault(); // Prevent default form submission behavior
-                    getExplanation();
+                    event.preventDefault(); 
+                    getExplanation("eli5"); 
+                }
+            });
+
+            expandExplanationButton.addEventListener('click', () => {
+                if (currentConcept) {
+                    getExplanation("expand_eli5"); 
                 }
             });
 
