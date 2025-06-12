@@ -138,6 +138,13 @@
 
                 loadingIndicator.classList.remove('hidden');
 
+    // --- NEW DEBUG LOGGING ---
+    console.log("Frontend preparing to send request:");
+    console.log("  Model Name:", MODEL_NAME);
+    console.log("  Base64 Data Length:", base64Data ? base64Data.length : "null/undefined");
+    console.log("  Payload to send:", JSON.stringify({ modelName: MODEL_NAME, base64Data: base64Data }).substring(0, 500) + "..."); // Log snippet of payload
+    // --- END NEW DEBUG LOGGING ---
+
                 try {
                     // This payload is now sent to YOUR DigitalOcean Function
                     const payloadToSendToBackend = {
