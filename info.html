@@ -56,6 +56,11 @@
         .swot-quadrant {
             border: 2px solid rgba(112, 50, 126, 0.2);
         }
+        .reference-link {
+            vertical-align: super;
+            font-size: 0.6em;
+            color: #4f46e5;
+        }
     </style>
 </head>
 <body class="antialiased">
@@ -64,7 +69,7 @@
     <!-- Visualization Choices: Big Number (Hook), Donut/Area/Icon Charts (Benefits), HTML/CSS Flowchart (Process), Bar/Bubble Charts (Market), and HTML/CSS Grid (SWOT). Justification: Each choice aligns with the 'Infographic Chart Selection Guide' to best represent the data type (e.g., flowchart for process, bar chart for comparison) while adhering to NO SVG/NO MERMAID JS constraints. -->
     <!-- Confirmation: Neither Mermaid JS nor SVG graphics were used in this output. All visualizations are rendered using Chart.js/Canvas or structured HTML/CSS with Tailwind. -->
 
-    <div class="container mx-auto p-4 md:p-8 max-w-7xl">
+    <div class="container mx-auto p-4 md:p-8 max-w-6xl">
         <header class="text-center py-12">
             <h1 class="text-4xl md:text-6xl font-black text-[#70327E] mb-4">The Serverless AI Revolution</h1>
             <p class="text-lg md:text-xl text-gray-700 max-w-3xl mx-auto">Shifting from complex infrastructure management to pure, on-demand AI power. This report analyzes the key trends, benefits, and market opportunities driving the adoption of serverless inference.</p>
@@ -74,9 +79,9 @@
             
             <section id="hook" class="bg-white rounded-xl shadow-lg p-8 md:p-12 text-center">
                 <p class="text-2xl font-semibold text-gray-600 mb-2">Accelerate Time-to-Market</p>
-                <div class="text-7xl md:text-9xl font-black text-[#00A6ED]">10x</div>
-                <p class="text-2xl font-semibold text-gray-600 mt-2">Faster Integration Cycles</p>
-                <p class="mt-4 max-w-2xl mx-auto text-gray-500">By eliminating infrastructure setup and management, development teams can integrate production-ready AI models in days, not months, drastically reducing the time from concept to launch.</p>
+                <div class="text-7xl md:text-9xl font-black text-[#00A6ED]">67%</div>
+                <p class="text-2xl font-semibold text-gray-600 mt-2">Reduction in Time-to-Market for New AI Features</p>
+                <p class="mt-4 max-w-2xl mx-auto text-gray-500">By eliminating infrastructure setup and management, development teams can integrate production-ready AI models in days, not months. Medium-sized businesses report a 67% reduction in time-to-market for new AI features, with deployment preparation time reduced by 63.8%.<sup class="reference-link"><a href="full_research.html#ref10">[10]</a></sup></p>
             </section>
             
             <section id="benefits">
@@ -85,25 +90,25 @@
                     
                     <div class="bg-white rounded-xl shadow-lg p-6 flex flex-col">
                         <h3 class="text-xl font-bold text-[#70327E] mb-4">Zero Infrastructure Management</h3>
-                        <p class="text-gray-600 mb-4 flex-grow">Developers are freed from the complexities of server provisioning, scaling, and maintenance. This allows a singular focus on application logic and delivering business value.</p>
+                        <p class="text-gray-600 mb-4 flex-grow">Developers are freed from the complexities of server provisioning, scaling, and maintenance. This drastically reduces operational overhead and allows a singular focus on application logic and delivering business value.<sup class="reference-link"><a href="full_research.html#ref1">[1,2,3,4]</a></sup></p>
                         <div class="chart-container h-64 md:h-72">
                             <canvas id="costChart"></canvas>
                         </div>
-                        <p class="mt-4 text-center text-sm text-gray-500">This chart illustrates the cost savings. Traditional models incur costs for idle time, whereas serverless operates on a pure pay-for-use basis, eliminating waste.</p>
+                        <p class="mt-4 text-center text-sm text-gray-500">This chart illustrates the cost savings. Traditional models incur costs for idle time, whereas serverless operates on a pure pay-for-use basis, eliminating waste.<sup class="reference-link"><a href="full_research.html#ref5">[5,7,8,9]</a></sup></p>
                     </div>
                     
                     <div class="bg-white rounded-xl shadow-lg p-6 flex flex-col">
                         <h3 class="text-xl font-bold text-[#70327E] mb-4">Automatic &amp; Effortless Scaling</h3>
-                        <p class="text-gray-600 mb-4 flex-grow">The platform seamlessly handles unpredictable traffic, scaling from zero to thousands of requests per second without manual intervention, ensuring consistent performance.</p>
+                        <p class="text-gray-600 mb-4 flex-grow">The platform seamlessly handles unpredictable traffic, scaling from zero to thousands of requests per second without manual intervention, ensuring consistent performance.<sup class="reference-link"><a href="full_research.html#ref1">[1,2,3]</a></sup></p>
                         <div class="chart-container h-64 md:h-72">
                              <canvas id="scalingChart"></canvas>
                         </div>
-                        <p class="mt-4 text-center text-sm text-gray-500">The area chart shows how compute resources (blue) dynamically scale to match user demand (pink), ensuring optimal resource allocation at all times.</p>
+                        <p class="mt-4 text-center text-sm text-gray-500">The area chart shows how compute resources (blue) dynamically scale to match user demand (pink). Automated scaling can handle sudden traffic increases with minimal impact on response time.</p>
                     </div>
 
                     <div class="bg-white rounded-xl shadow-lg p-6 flex flex-col md:col-span-2 lg:col-span-1">
                         <h3 class="text-xl font-bold text-[#70327E] mb-4">Simplified Model Integration</h3>
-                        <p class="text-gray-600 mb-4 flex-grow">A unified API provides a consistent, straightforward method for integrating diverse AI models into applications, abstracting away the complexities of different frameworks and providers.</p>
+                        <p class="text-gray-600 mb-4 flex-grow">A unified API provides a consistent, straightforward method for integrating diverse AI models into applications, abstracting away the complexities of different frameworks and providers.<sup class="reference-link"><a href="full_research.html#ref1">[1]</a></sup> OpenAI-compatible APIs further accelerate time-to-value.<sup class="reference-link"><a href="full_research.html#ref13">[13]</a></sup></p>
                         <div class="flex items-center justify-center h-full text-6xl text-[#00A6ED]">
                             <span class="p-4 bg-blue-100 rounded-full">⚙️</span>
                             <span class="mx-4 text-3xl font-bold text-gray-400">&rarr;</span>
@@ -117,7 +122,7 @@
             
             <section id="workflow" class="bg-white rounded-xl shadow-lg p-8 md:p-12">
                 <h2 class="text-3xl font-bold text-center mb-10 text-[#70327E]">The Modern Developer's Journey</h2>
-                <p class="text-center max-w-3xl mx-auto mb-12 text-gray-600">The serverless paradigm transforms the developer workflow into a streamlined, three-step process focused on rapid integration, as shown below. This contrasts sharply with traditional methods that involve extensive infrastructure planning and setup before any code is written.</p>
+                <p class="text-center max-w-3xl mx-auto mb-12 text-gray-600">The serverless paradigm transforms the developer workflow into a streamlined, three-step process focused on rapid integration and iteration, as shown below. This contrasts sharply with traditional methods that involve extensive infrastructure planning and setup before any code is written.</p>
                 <div class="max-w-md mx-auto">
                     <div class="flow-step">
                         <div class="flow-step-dot"></div>
@@ -129,7 +134,6 @@
                         <h4 class="font-bold text-lg text-gray-800">2. Generate API Key</h4>
                         <p class="text-gray-600">Obtain an API key to access pre-available models instantly.</p>
                     </div>
-                    
                     <div class="flow-step">
                         <div class="flow-step-dot"></div>
                         <h4 class="font-bold text-lg text-gray-800">3. Interact with Model via API</h4>
@@ -143,15 +147,15 @@
                 <p class="text-center max-w-3xl mx-auto mb-12 text-gray-600">Serverless AI is poised for wide adoption across various roles and industries. Its simplicity appeals to developers and non-technical stakeholders alike, while its flexibility opens up new, powerful use cases that were previously impractical.</p>
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     <div class="bg-white rounded-xl shadow-lg p-6">
-                        <h3 class="text-xl font-bold text-center text-[#70327E] mb-4">Key Adopter Profiles</h3>
-                        <p class="text-center text-sm text-gray-500 mb-4">This chart shows the level of impact and suitability of serverless AI for different roles. The simplified workflow empowers developers, while the clear ROI and speed-to-market appeal strongly to sales and leadership.</p>
+                        <h3 class="text-xl font-bold text-center text-[#70327E] mb-4">Key Adopter Profiles & Market Share</h3>
+                        <p class="text-center text-sm text-gray-500 mb-4">The Banking, Financial Services, and Insurance (BFSI) sector leads in market share, followed by transportation and logistics. North America dominates geographically, while the Asia Pacific region shows the highest growth potential.<sup class="reference-link"><a href="full_research.html#ref10">[10]</a></sup></p>
                         <div class="chart-container h-80 md:h-96">
                              <canvas id="audienceChart"></canvas>
                         </div>
                     </div>
                     <div class="bg-white rounded-xl shadow-lg p-6">
                         <h3 class="text-xl font-bold text-center text-[#70327E] mb-4">Emerging Use Cases</h3>
-                        <p class="text-center text-sm text-gray-500 mb-4">The bubble chart highlights key growth areas. While batch processing is a common entry point, real-time streaming inference and complex feedback loops represent significant future market opportunities.</p>
+                        <p class="text-center text-sm text-gray-500 mb-4">The bubble chart highlights key growth areas. While batch processing is a common entry point, real-time streaming inference and IoT applications represent significant future market opportunities.<sup class="reference-link"><a href="full_research.html#ref1">[1]</a></sup></p>
                         <div class="chart-container h-80 md:h-96">
                              <canvas id="useCaseChart"></canvas>
                         </div>
@@ -166,35 +170,34 @@
                     <div class="bg-green-50 rounded-lg p-6 swot-quadrant">
                         <h3 class="text-2xl font-bold text-green-800 mb-3">Strengths ✅</h3>
                         <ul class="list-disc list-inside space-y-2 text-green-700">
-                            <li>Drastically reduced operational costs</li>
-                            <li>Accelerated development and integration cycles</li>
-                            <li>Massive scalability handled automatically</li>
-                            <li>Lowered barrier to AI adoption</li>
+                            <li>Drastically reduced operational costs<sup class="reference-link"><a href="full_research.html#ref7">[7,8]</a></sup></li>
+                            <li>Accelerated development and integration cycles<sup class="reference-link"><a href="full_research.html#ref1">[1]</a></sup></li>
+                            <li>Massive scalability handled automatically<sup class="reference-link"><a href="full_research.html#ref2">[2,3]</a></sup></li>
+                            <li>Lowered barrier to AI adoption<sup class="reference-link"><a href="full_research.html#ref10">[10]</a></sup></li>
                         </ul>
                     </div>
                     <div class="bg-red-50 rounded-lg p-6 swot-quadrant">
                          <h3 class="text-2xl font-bold text-red-800 mb-3">Weaknesses ⚠️</h3>
                         <ul class="list-disc list-inside space-y-2 text-red-700">
-                            <li>Potential for 'cold start' latency on first request</li>
-                            <li>Less control over underlying hardware</li>
-                            <li>Can be less cost-effective for constant, high-traffic</li>
+                            <li>Potential for 'cold start' latency on first request<sup class="reference-link"><a href="full_research.html#ref15">[15,16]</a></sup></li>
+                            <li>Less control over underlying hardware<sup class="reference-link"><a href="full_research.html#ref5">[5]</a></sup></li>
+                            <li>Can be less cost-effective for constant, high-traffic<sup class="reference-link"><a href="full_research.html#ref11">[11]</a></sup></li>
                         </ul>
                     </div>
                     <div class="bg-blue-50 rounded-lg p-6 swot-quadrant">
                         <h3 class="text-2xl font-bold text-blue-800 mb-3">Opportunities 🚀</h3>
                         <ul class="list-disc list-inside space-y-2 text-blue-700">
-                            <li>Growth in real-time streaming inference</li>
-                            <li>Integration into IoT and edge devices</li>
-                            <li>Expansion of model-as-a-service marketplaces</li>
-                            <li>Automated feedback loops for self-improving models</li>
+                            <li>Growth in real-time streaming inference<sup class="reference-link"><a href="full_research.html#ref1">[1]</a></sup></li>
+                            <li>Integration into IoT and edge devices<sup class="reference-link"><a href="full_research.html#ref6">[6]</a></sup></li>
+                            <li>Expansion of model-as-a-service marketplaces<sup class="reference-link"><a href="full_research.html#ref13">[13]</a></sup></li>
                         </ul>
                     </div>
                     <div class="bg-yellow-50 rounded-lg p-6 swot-quadrant">
                         <h3 class="text-2xl font-bold text-yellow-800 mb-3">Threats 🛡️</h3>
                         <ul class="list-disc list-inside space-y-2 text-yellow-700">
-                            <li>Potential for vendor lock-in</li>
-                            <li>Increasing complexity of model management</li>
-                            <li>Security concerns in multi-tenant environments</li>
+                            <li>Potential for vendor lock-in<sup class="reference-link"><a href="full_research.html#ref17">[17]</a></sup></li>
+                            <li>Increasing complexity of model management<sup class="reference-link"><a href="full_research.html#ref1">[1]</a></sup></li>
+                            <li>Security concerns in multi-tenant environments<sup class="reference-link"><a href="full_research.html#ref19">[19,20]</a></sup></li>
                         </ul>
                     </div>
                 </div>
@@ -205,6 +208,9 @@
         <footer class="text-center py-12 mt-16 border-t border-gray-300">
              <p class="text-lg font-semibold text-[#70327E]">The future of AI development is simple, scalable, and serverless.</p>
              <p class="text-gray-600 mt-2">This technology empowers organizations to innovate faster and more efficiently than ever before.</p>
+             <p class="text-sm text-gray-500 mt-4">
+                 For a deeper dive into the data, visit the <a href="full_research.html" class="text-indigo-600 hover:underline">Full Research</a> page.
+             </p>
         </footer>
 
     </div>
@@ -234,6 +240,9 @@
             };
 
             const wrapLabel = (label, maxLength = 16) => {
+                if (typeof label !== 'string') {
+                    return label;
+                }
                 if (label.length <= maxLength) {
                     return label;
                 }
@@ -252,16 +261,17 @@
                 return lines;
             };
 
+            // Chart Data - Cost Analysis
             const costCtx = document.getElementById('costChart');
             if (costCtx) {
                 new Chart(costCtx, {
                     type: 'doughnut',
                     data: {
-                        labels: ['Cost for Actual Use', 'Wasted Cost (Idle Time)'],
+                        labels: ['Actual Use (25%)', 'Idle Time (75%)'],
                         datasets: [{
                             data: [25, 75],
-                            backgroundColor: ['#FF82A9', '#E0E0E0'],
-                            borderColor: ['#FF82A9', '#E0E0E0'],
+                            backgroundColor: ['#00A6ED', '#FFC0BE'],
+                            borderColor: ['#FFFFFF', '#FFFFFF'],
                             borderWidth: 1,
                             hoverOffset: 4
                         }]
@@ -295,6 +305,7 @@
                 });
             }
 
+            // Chart Data - Scaling Simulation
             const scalingCtx = document.getElementById('scalingChart');
             if (scalingCtx) {
                 new Chart(scalingCtx, {
@@ -304,9 +315,11 @@
                         datasets: [{
                             label: 'User Demand',
                             data: [10, 20, 80, 85, 50, 40, 90, 95, 20, 10],
-                            borderColor: '#FF82A9',
+                            borderColor: '#70327E',
+                            backgroundColor: 'rgba(112, 50, 126, 0.2)',
                             tension: 0.4,
-                            pointRadius: 0
+                            pointRadius: 0,
+                            fill: true
                         }, {
                             label: 'Allocated Resources',
                             data: [15, 25, 85, 90, 55, 45, 95, 100, 25, 15],
@@ -314,7 +327,7 @@
                             borderColor: '#00A6ED',
                             fill: true,
                             tension: 0.4,
-                             pointRadius: 0
+                            pointRadius: 0
                         }]
                     },
                     options: {
@@ -329,17 +342,21 @@
                 });
             }
 
+            // Chart Data - Key Adopter Profiles (Market Share)
             const audienceCtx = document.getElementById('audienceChart');
             if (audienceCtx) {
-                const rawLabels = ['New Developers', 'Sales & Leadership', 'Potential Clients & Investors', 'Non-Technical Stakeholders'];
+                const rawLabels = ['BFSI (28.3%)', 'Transportation & Logistics (22.1%)', 'North America Market Share (38.4%)', 'Asia Pacific Growth (29.7%)'];
+                const dataValues = [28.3, 22.1, 38.4, 29.7];
+                const backgroundColors = ['#00A6ED', '#70327E', '#FF82A9', '#FFC0BE'];
+
                 new Chart(audienceCtx, {
                     type: 'bar',
                     data: {
                         labels: rawLabels.map(label => wrapLabel(label)),
                         datasets: [{
-                            label: 'Impact Score',
-                            data: [90, 85, 75, 60],
-                            backgroundColor: ['#00A6ED', '#70327E', '#FF82A9', '#FFC0BE'],
+                            label: 'Percentage',
+                            data: dataValues,
+                            backgroundColor: backgroundColors,
                             borderRadius: 4
                         }]
                     },
@@ -348,46 +365,47 @@
                         responsive: true,
                         maintainAspectRatio: false,
                         plugins: commonPlugins,
-                         scales: {
-                             x: {
+                        scales: {
+                            x: {
                                 grid: {
                                     display: false
                                 },
                                 ticks: {
                                    display: false
                                 }
-                             },
-                             y: {
+                            },
+                            y: {
                                 grid: {
                                     display: false
                                 }
-                             }
+                            }
                         }
                     }
                 });
             }
 
+            // Chart Data - Emerging Use Cases (Illustrative Bubble Chart)
             const useCaseCtx = document.getElementById('useCaseChart');
             if (useCaseCtx) {
                 new Chart(useCaseCtx, {
                     type: 'bubble',
                     data: {
                         datasets: [{
-                            label: 'Batch Inference',
-                            data: [{ x: 20, y: 30, r: 25 }],
+                            label: 'Real-time Processing',
+                            data: [{ x: 30, y: 70, r: 25 }], // x, y for position, r for size
                             backgroundColor: 'rgba(0, 166, 237, 0.7)'
                         }, {
-                            label: 'Real-time Streaming',
-                            data: [{ x: 40, y: 60, r: 35 }],
-                             backgroundColor: 'rgba(112, 50, 126, 0.7)'
+                            label: 'IoT Applications',
+                            data: [{ x: 70, y: 30, r: 35 }],
+                            backgroundColor: 'rgba(112, 50, 126, 0.7)'
                         }, {
-                            label: 'Interactive Feedback Loops',
-                            data: [{ x: 65, y: 45, r: 20 }],
-                             backgroundColor: 'rgba(255, 130, 169, 0.7)'
+                            label: 'Rapid Prototyping',
+                            data: [{ x: 20, y: 30, r: 20 }],
+                            backgroundColor: 'rgba(255, 130, 169, 0.7)'
                         }, {
-                            label: 'Cost Analysis Dashboards',
-                            data: [{ x: 70, y: 20, r: 15 }],
-                             backgroundColor: 'rgba(255, 192, 190, 0.7)'
+                            label: 'Content Enhancement',
+                            data: [{ x: 80, y: 80, r: 15 }],
+                            backgroundColor: 'rgba(255, 192, 190, 0.7)'
                         }]
                     },
                     options: {
@@ -406,13 +424,12 @@
                             }
                         },
                         scales: {
-                            y: { display: false },
-                            x: { display: false }
+                            y: { beginAtZero: true, display: false },
+                            x: { beginAtZero: true, display: false }
                         }
                     }
                 });
             }
-
         });
     </script>
 </body>
